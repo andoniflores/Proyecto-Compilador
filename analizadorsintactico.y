@@ -50,14 +50,17 @@
 %right uminus
 %left '(' ')'
 %start entrada
-%% 
-entrada: program id semicolon DECLARACIONES begin INSTRUCCIONES end {printf("Resultado: OK");} //una vez que se verifica que la sintaxis del program es correcta
+%%
+
+//una vez que se verifica que la sintaxis del program es correcta
+entrada: program id semicolon DECLARACIONES begin INSTRUCCIONES end {printf("Resultado: OK");}
 											       //se imprime en pantalla "Resultado: OK"
 
-DECLARACIONES: VARIABLES 
+DECLARACIONES: VARIABLES
 	;
 
-VARIABLES: var id ARREGLO MASVARIABLES colon TIPO semicolon		//VARIABLES permite la definicion de varias variables ejemplo: var x, y, z:real;
+//VARIABLES permite la definicion de varias variables ejemplo: var x, y, z:real;
+VARIABLES: var id ARREGLO MASVARIABLES colon TIPO semicolon
 	| VARIABLES var id ARREGLO MASVARIABLES colon TIPO semicolon
 	;
 
@@ -70,8 +73,10 @@ ARREGLO: '['EXPRESIONARR']'
 	|
 	;
 
-EXPRESIONARR: EXPRESIONARR suma EXPRESIONARR		//Expresion que va dentro de los arreglos se separó esta expresion de las demas
-	|EXPRESIONARR resta EXPRESIONARR		// para evitar que se pudiera escribir reales y expresiones AND OR
+//Expresion que va dentro de los arreglos se separó esta expresion de las demas
+//para evitar que se pudiera escribir reales y expresiones AND OR
+EXPRESIONARR: EXPRESIONARR suma EXPRESIONARR
+	|EXPRESIONARR resta EXPRESIONARR
 	|EXPRESIONARR multiplicacion EXPRESIONARR
 	|EXPRESIONARR division EXPRESIONARR
 	|resta '(' EXPRESIONARR ')' %prec uminus
@@ -81,8 +86,10 @@ EXPRESIONARR: EXPRESIONARR suma EXPRESIONARR		//Expresion que va dentro de los a
 	|entero
 	;
 
-EXPRESION: EXPRESION y EXPRESION			//Se unieron las expresiones aritmeticas, de comparacion y logicas para eliminar conflicto
-	| EXPRESION o EXPRESION				//reduce/reduce, se trataran las restricciones en generacion de codigo
+//Se unieron las expresiones aritmeticas, de comparacion y logicas para eliminar conflicto
+//reduce/reduce, se trataran las restricciones en generacion de codigo
+EXPRESION: EXPRESION y EXPRESION
+	| EXPRESION o EXPRESION
 	|EXPRESION igual EXPRESION
 	|EXPRESION distinto EXPRESION
 	|EXPRESION menorque EXPRESION
@@ -94,7 +101,7 @@ EXPRESION: EXPRESION y EXPRESION			//Se unieron las expresiones aritmeticas, de 
 	|EXPRESION multiplicacion EXPRESION
 	|EXPRESION division EXPRESION
 	|resta '(' EXPRESION ')' %prec uminus
-	|no '(' EXPRESION ')' 
+	|no '(' EXPRESION ')'
 	|EXPRESION potencia EXPRESION
 	|'(' EXPRESION ')'
 	|VARBOOLEANA
@@ -116,9 +123,12 @@ TIPO: tipoentero
 	| tipoboolean
 	;
 
-INSTRUCCIONES: id asignacion EXPRESION semicolon INSTRUCCIONES							//Notese que hay "INSTRUCCIONES" al final de todas las producciones
-	|tif '(' EXPRESION ')' tthen begin INSTRUCCIONES end INSTRUCCIONES					//esto se hizo para anidar instrucciones, se logro agregando
-	|tif '(' EXPRESION ')' tthen begin INSTRUCCIONES end telse begin INSTRUCCIONES end INSTRUCCIONES	// una produccion vacía 
+//Notar que hay "INSTRUCCIONES" al final de todas las producciones
+//esto se hizo para anidar instrucciones, se logro agregando
+//una produccion vacía
+INSTRUCCIONES: id asignacion EXPRESION semicolon INSTRUCCIONES
+	|tif '(' EXPRESION ')' tthen begin INSTRUCCIONES end INSTRUCCIONES
+	|tif '(' EXPRESION ')' tthen begin INSTRUCCIONES end telse begin INSTRUCCIONES end INSTRUCCIONES
 	|mientras '(' EXPRESION ')' hacer begin INSTRUCCIONES end INSTRUCCIONES
 	|para '(' id asignacion VAR semicolon VAR semicolon VAR ')' begin INSTRUCCIONES end INSTRUCCIONES
 	|mostrar '(' cadena ',' id ARREGLO MASVARIABLES ')' semicolon INSTRUCCIONES
